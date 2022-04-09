@@ -1,6 +1,5 @@
 {
-  "apiKey": "HNJ4BDFUYB0PS9M4-DEMO",
-  "apiUrl": "https://www.alphavantage.co/query?apikey=",
+  "hostname": "nasdaqbaltic.com",
   "instruments": [
     {
       "name": "Tallink",

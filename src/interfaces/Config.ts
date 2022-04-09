@@ -2,7 +2,6 @@ import {Instrument} from "./Instrument";
 
 export interface Config
 {
-    apiKey: string;
-    apiUrl: string;
+    hostname: string;
     instruments: Instrument[];
 }
