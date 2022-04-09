@@ -1,0 +1,25 @@
+{
+  "name": "share-price",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/App.js",
+  "scripts": {
+    "start": "nodemon src/App.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinorgla/share-price.git"
+  },
+  "author": "Martin Orgla",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/martinorgla/share-price/issues"
+  },
+  "homepage": "https://github.com/martinorgla/share-price#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0"
+  }
+}
