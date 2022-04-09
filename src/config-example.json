@@ -1,0 +1,14 @@
+{
+  "apiKey": "HNJ4BDFUYB0PS9M4-DEMO",
+  "apiUrl": "https://www.alphavantage.co/query?apikey=",
+  "instruments": [
+    {
+      "name": "Tallink",
+      "isin": "EE3100004466"
+    },
+    {
+      "name": "Tallinna Kaubamaja",
+      "isin": "EE0000001105"
+    }
+  ]
+}
