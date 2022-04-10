@@ -57,8 +57,4 @@ export class Database {
     insertDailyPrice(inputData: { isin: string, name: string, date: string, "price_close": number }): void {
         this.execute<any[]>("INSERT INTO `daily_prices` SET ?;", inputData);
     }
-
-    testExecution() {
-        // this.execute<any[]>("SELECT * FROM `equities`;", []).then(res => console.log(res));
-    }
 }
