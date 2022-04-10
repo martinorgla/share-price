@@ -18,8 +18,6 @@ export class Database extends Config {
                 password: this.config.db.password,
                 database: this.config.db.name,
             });
-
-            console.debug('MySql Adapter Pool generated successfully');
         } catch (error) {
             console.error('[mysql.connector][init][Error]: ', error);
             throw new Error('failed to initialized pool');

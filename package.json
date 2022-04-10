@@ -5,6 +5,7 @@
   "main": "dist/App.js",
   "scripts": {
     "start": "nodemon src/App.ts",
+    "historical": "nodemon src/App.ts fetchHistoricalPrices",
     "build": "tsc",
     "test": "jest"
   },

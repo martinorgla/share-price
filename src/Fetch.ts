@@ -12,10 +12,20 @@ export class Fetch extends Config {
 
     handle(): void {
         this.config.instruments.forEach((instrument) => {
+            if (this.config.env === 'dry-run') {
+                this.fetchDailyPrices(instrument, "2022-04-08", "2022-04-08");
+                return;
+            }
+
             const currentDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
-            this.fetchDailyPrices(instrument, "2022-04-08", "2022-04-08");
-            // this.fetchDailyPrices(instrument, currentDate, currentDate);
-            // this.fetchHistoricalPrices(instrument);
+            this.fetchDailyPrices(instrument, currentDate, currentDate);
+        });
+    }
+
+    handleHistoricalPrices(): void {
+        this.config.instruments.forEach((instrument) => {
+            const currentDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
+            this.fetchHistoricalPrices(instrument);
         });
     }
 
@@ -38,7 +48,7 @@ export class Fetch extends Config {
                 const date = new Date(lastPrice[0]).toISOString().slice(0, 10).replace('T', ' ');
                 const priceClose = lastPrice[1];
 
-                console.log(instrument.name + ' last price ' + priceClose + ' -> ' + date);
+                console.log('"' + instrument.name + '" ' + date + ' close price: ' + priceClose + '€');
 
                 this.database.insertDailyPrice({
                     name: instrument.name,

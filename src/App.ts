@@ -1,6 +1,14 @@
 import {Fetch} from "./Fetch";
 
-// TODO: Add cron?
 const fetch = new Fetch();
 fetch.init();
-fetch.handle();
+
+const fetchHistoricalPrices = process.argv.find(arg => arg === 'fetchHistoricalPrices');
+
+if (fetchHistoricalPrices) {
+    fetch.handleHistoricalPrices();
+}
+
+if (!fetchHistoricalPrices) {
+    fetch.handle();
+}
