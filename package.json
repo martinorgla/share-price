@@ -19,7 +19,11 @@
   },
   "homepage": "https://github.com/martinorgla/share-price#readme",
   "devDependencies": {
+    "@types/mysql2": "github:types/mysql2",
     "nodemon": "^2.0.15",
     "ts-node": "^10.7.0"
+  },
+  "dependencies": {
+    "mysql2": "^2.3.3"
   }
 }

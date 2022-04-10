@@ -1,5 +1,13 @@
 {
   "hostname": "nasdaqbaltic.com",
+  "db": {
+    "host": "",
+    "name": "",
+    "user": "",
+    "password": "",
+    "port": 3306,
+    "connectionLimit": 5
+  },
   "instruments": [
     {
       "name": "Tallink",

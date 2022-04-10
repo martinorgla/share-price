@@ -1,36 +1,86 @@
 import * as https from "https";
 import {Instrument} from "./interfaces/Instrument";
-import {Config} from "./interfaces/Config";
+import {Database} from "./Database";
 
-export class Fetch {
-    public config: Config = require('./config.json');
-
+export class Fetch extends Database {
     handle(): void {
         this.config.instruments.forEach((instrument) => {
-            // TODO: Prepare options
-            // TODO: GET data
-            // TODO: Save data to DB
+            const currentDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
+            // this.fetchDailyPrices(instrument, currentDate, currentDate);
+            // this.fetchHistoricalPrices(instrument);
+        });
+    }
 
-            const options = this.options(instrument);
-            https.get(options, (response) => {
-                let result: string = '';
-                response.on('data', function (chunk) {
-                    result += chunk;
-                });
+    fetchDailyPrices(instrument: Instrument, startDate: string, endDate: string): void {
+        const options = this.options(instrument, startDate, endDate);
 
-                response.on('end', function () {
-                    let responseData = JSON.parse(result);
-                    const lastPrice = responseData.data.data[responseData.data.data.length-1][1];
-                    console.log(instrument.name + ' last price ' + lastPrice);
+        https.get(options, (response) => {
+            let result: string = '';
+            response.on('data', function (chunk) {
+                result += chunk;
+            });
+
+            response.on('end', function () {
+                const responseData = JSON.parse(result);
+                if (!responseData.data.data.length) {
+                    return;
+                }
+
+                const lastPrice = responseData.data.data[responseData.data.data.length - 1];
+                const date = new Date(lastPrice[0]).toISOString().slice(0, 10).replace('T', ' ');
+                const priceClose = lastPrice[1];
+
+                console.log(instrument.name + ' last price ' + priceClose + ' -> ' + date);
+
+                this.insertDailyPrice({
+                    name: instrument.name,
+                    isin: instrument.isin,
+                    date: date,
+                    "price_close": priceClose
                 });
             });
         });
     }
 
-    options(instrument: Instrument): any {
+    fetchHistoricalPrices(instrument: Instrument): void {
+        const historyStartDate = new Date(1589760000000).toISOString().slice(0, 10).replace('T', ' ');
+        const endDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
+        const options = this.options(instrument, historyStartDate, endDate);
+
+        https.get(options, (response) => {
+            let result: string = '';
+            response.on('data', function (chunk) {
+                result += chunk;
+            });
+
+            response.on('end', () => {
+                const responseData = JSON.parse(result);
+
+                if (!responseData.data.data.length) {
+                    return;
+                }
+
+                responseData.data.data.forEach((lastPrice: any) => {
+                    const date = new Date(lastPrice[0]).toISOString().slice(0, 10).replace('T', ' ');
+                    const priceClose = lastPrice[1];
+
+                    this.insertDailyPrice({
+                        name: instrument.name,
+                        isin: instrument.isin,
+                        date: date,
+                        "price_close": priceClose
+                    });
+                });
+
+
+            });
+        });
+    }
+
+    options(instrument: Instrument, startDate: string, endDate: string): any {
         return {
             hostname: this.config.hostname,
-            path: `/statistics/et/instrument/${instrument.isin}/trading/chart_price_json?start=2022-04-08&end=2022-04-08&historical=0`,
+            path: `/statistics/et/instrument/${instrument.isin}/trading/chart_price_json?start=${startDate}&end=${endDate}&historical=0`,
             headers: {
                 referer: `https://nasdaqbaltic.com/statistics/et/instrument/${instrument.isin}/trading?date=2022-04-08`
             }
