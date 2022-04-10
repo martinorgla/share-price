@@ -1,6 +1,7 @@
 import {Instrument} from "./Instrument";
 
 export interface Config {
+    env: string;
     hostname: string;
     instruments: Instrument[];
     db: {

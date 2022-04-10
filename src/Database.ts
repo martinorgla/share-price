@@ -1,18 +1,15 @@
 import {createPool, Pool} from "mysql2";
-import {Config as IConfig} from "./interfaces/Config"
 import {Config} from "./Config";
 
-export class Database {
+export class Database extends Config {
     private pool: Pool;
-    config: IConfig;
 
     constructor() {
+        super();
         this.init();
     }
 
     init(): void {
-        this.config = Config.get();
-
         try {
             this.pool = createPool({
                 connectionLimit: this.config.db.connectionLimit,
@@ -55,6 +52,11 @@ export class Database {
     }
 
     insertDailyPrice(inputData: { isin: string, name: string, date: string, "price_close": number }): void {
+        if (this.config.env === 'dry-run') {
+            return;
+        }
+
         this.execute<any[]>("INSERT INTO `daily_prices` SET ?;", inputData);
+        console.log(`Isin ${inputData.isin}, name ${inputData.name}, date ${inputData.date}, close price ${inputData.price_close}`);
     }
 }

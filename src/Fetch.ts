@@ -1,11 +1,19 @@
 import * as https from "https";
 import {Instrument} from "./interfaces/Instrument";
 import {Database} from "./Database";
+import {Config} from "./Config";
 
-export class Fetch extends Database {
+export class Fetch extends Config {
+    private database: Database;
+
+    init(): void {
+        this.database = new Database();
+    }
+
     handle(): void {
         this.config.instruments.forEach((instrument) => {
             const currentDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
+            this.fetchDailyPrices(instrument, "2022-04-08", "2022-04-08");
             // this.fetchDailyPrices(instrument, currentDate, currentDate);
             // this.fetchHistoricalPrices(instrument);
         });
@@ -20,7 +28,7 @@ export class Fetch extends Database {
                 result += chunk;
             });
 
-            response.on('end', function () {
+            response.on('end', () => {
                 const responseData = JSON.parse(result);
                 if (!responseData.data.data.length) {
                     return;
@@ -32,7 +40,7 @@ export class Fetch extends Database {
 
                 console.log(instrument.name + ' last price ' + priceClose + ' -> ' + date);
 
-                this.insertDailyPrice({
+                this.database.insertDailyPrice({
                     name: instrument.name,
                     isin: instrument.isin,
                     date: date,
@@ -64,7 +72,7 @@ export class Fetch extends Database {
                     const date = new Date(lastPrice[0]).toISOString().slice(0, 10).replace('T', ' ');
                     const priceClose = lastPrice[1];
 
-                    this.insertDailyPrice({
+                    this.database.insertDailyPrice({
                         name: instrument.name,
                         isin: instrument.isin,
                         date: date,
@@ -82,7 +90,8 @@ export class Fetch extends Database {
             hostname: this.config.hostname,
             path: `/statistics/et/instrument/${instrument.isin}/trading/chart_price_json?start=${startDate}&end=${endDate}&historical=0`,
             headers: {
-                referer: `https://nasdaqbaltic.com/statistics/et/instrument/${instrument.isin}/trading?date=2022-04-08`
+                Host: "nasdaqbaltic.com",
+                referer: `https://nasdaqbaltic.com/statistics/et/instrument/${instrument.isin}/trading?date=${endDate}`
             }
         };
     }

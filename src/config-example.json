@@ -1,4 +1,5 @@
 {
+  "env": "dry-run",
   "hostname": "nasdaqbaltic.com",
   "db": {
     "host": "",
